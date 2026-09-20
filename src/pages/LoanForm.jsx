@@ -15,7 +15,7 @@ export default function LoanForm() {
 
   // Live preview so the borrower sees the cost before submitting —
   // mirrors the same formula the backend uses (kept in sync manually).
-  const preview = useMemo(() => {
+const preview = useMemo(() => {
     const p = parseFloat(form.principal);
     const r = parseFloat(form.interest_rate);
     const m = parseInt(form.duration_months);
@@ -31,13 +31,31 @@ export default function LoanForm() {
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
+
+    const p = parseFloat(form.principal);
+    const r = parseFloat(form.interest_rate);
+    const m = parseInt(form.duration_months);
+
+    if (!p || p <= 0 || p > 99999999) {
+      setError("Principal must be between 1 and $99,999,999.");
+      return;
+    }
+    if (r === null || r === undefined || isNaN(r) || r < 0 || r > 100) {
+      setError("Interest rate must be between 0 and 100%.");
+      return;
+    }
+    if (!m || m < 1 || m > 600) {
+      setError("Duration must be between 1 and 600 months.");
+      return;
+    }
+
     setLoading(true);
     try {
       await createLoan({
         ...form,
-        principal: parseFloat(form.principal),
-        interest_rate: parseFloat(form.interest_rate),
-        duration_months: parseInt(form.duration_months),
+        principal: p,
+        interest_rate: r,
+        duration_months: m,
       });
       navigate("/loans");
     } catch (err) {
