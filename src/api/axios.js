@@ -45,7 +45,7 @@
 import axios from "axios";
 
 // Backend root from .env. Keep in sync with `php artisan serve` origin.
-const baseURL = import.meta.env.VITE_API_URL;
+const baseURL = import.meta.env.VITE_API_URL ?? '';
 
 // Reserved for Sanctum-style CSRF bootstrap. Not called today, but kept wired
 // so the auth flow can fetch a CSRF cookie without further plumbing.
