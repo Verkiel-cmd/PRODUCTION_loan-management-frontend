@@ -15,6 +15,7 @@ const STATUS_STYLES = {
 export default function LoanList() {
   const { user } = useAuth();
   const [loans, setLoans] = useState([]);
+  //only if admin have access on delet and other CRUDS
   const isAdmin = user?.role === "admin";
 
   function load() {
@@ -37,6 +38,8 @@ export default function LoanList() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       <h1 className="text-lg font-semibold text-slate-900 mb-6">
+
+        {/* If admin proceed */}
         {isAdmin ? "All loans" : "Your loans"}
       </h1>
 
