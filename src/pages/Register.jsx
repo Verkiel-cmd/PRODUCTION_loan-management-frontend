@@ -1,11 +1,16 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { register } from "../api/auth";
+import { useAuth } from "../context/AuthContext"; 
+import axios from "axios";
 
 export default function Register() {
+
+  const { setUser } = useAuth();
+  const API_URL = import.meta.env.VITE_API_URL ?? "";
+
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
     password_confirmation: "",
@@ -17,8 +22,18 @@ export default function Register() {
     e.preventDefault();
     setError("");
     setLoading(true);
+
     try {
-      await register(form.name, form.email, form.password, form.password_confirmation);
+    const { data } = await axios.post(`${API_URL}/api/register`, {
+        username: form.username,
+        email: form.email,
+        password: form.password,
+        password_confirmation: form.password_confirmation,
+      },
+      { withCredentials: true }
+    );
+
+      setUser(data.user);          // so Dashboard/ProtectedRoute know who you are
       navigate("/dashboard");
     } catch (err) {
       const messages = err.response?.data?.errors;
@@ -42,7 +57,7 @@ export default function Register() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {[
-            { key: "name", label: "Full name", type: "text" },
+            { key: "username", label: "Username", type: "text" },
             { key: "email", label: "Email", type: "email" },
             { key: "password", label: "Password", type: "password" },
             { key: "password_confirmation", label: "Confirm password", type: "password" },

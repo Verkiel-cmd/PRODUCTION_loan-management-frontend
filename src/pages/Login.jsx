@@ -1,13 +1,20 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import axios from "axios";
 
 export default function Login() {
-  const { login } = useAuth();
+
+  const { setUser } = useAuth();
+  const API_URL = import.meta.env.VITE_API_URL ?? "";
+
   const navigate = useNavigate();
   // Pre-filled with the seeded admin credentials (see backend DatabaseSeeder:
   // admin@example.com / password) so the app is instantly testable.
-  const [form, setForm] = useState({ email: "admin@example.com", password: "password" });
+  //const [form, setForm] = useState({ email: "", password: "" });
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -15,11 +22,21 @@ export default function Login() {
     e.preventDefault();
     setError("");
     setLoading(true);
+
     try {
-      await login(form.email, form.password);
+    const { data } = await axios.post(`${API_URL}/api/login`, {
+        username: username,
+        email: email,
+        password: password,
+      },
+      { withCredentials: true }
+    );
+
+      setUser(data.user);          // so Dashboard/ProtectedRoute know who you are
       navigate("/dashboard");
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed. Check your details.");
+      const messages = err.response?.data?.errors;
+      setError(messages ? Object.values(messages).flat().join(" ") : "Login failed.");
     } finally {
       setLoading(false);
     }
@@ -38,14 +55,26 @@ export default function Login() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Username</label>
+            <input
+              type="text"
+              required
+              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
             <input
               type="email"
               required
               className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
@@ -55,8 +84,8 @@ export default function Login() {
               type="password"
               required
               className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <Link to="/forgot-password" className="text-xs text-slate-500 hover:underline mt-1 inline-block">
               Forgot password?

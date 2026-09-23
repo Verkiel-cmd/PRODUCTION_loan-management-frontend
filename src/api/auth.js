@@ -44,18 +44,18 @@ import api from "./axios";
 /**
  * POST /api/login  -> logs in and stores the Laravel session cookie.
  */
-export async function login(email, password) {
-  const { data } = await api.post("/login", { email, password });
+export async function login(username, email, password) {
+  const { data } = await api.post("/login", { username, email, password });
   return data.user;
 }
 
 /**
  * POST /api/register -> creates the account (role 'user') and logs it in.
  */
-export async function register(name, email, password, passwordConfirmation) {
+export async function register(username, email, password, passwordConfirmation) {
   const { data } = await api.post(
     "/register",
-    { name, email, password, password_confirmation: passwordConfirmation },
+    { username, email, password, password_confirmation: passwordConfirmation },
   );
   return data.user;
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getLoans, updateLoanStatus, deleteLoan } from "../api/loans";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const STATUS_STYLES = {
@@ -39,6 +40,10 @@ export default function LoanList() {
         {isAdmin ? "All loans" : "Your loans"}
       </h1>
 
+      <Link to="/dashboard" className="inline-block py-5 text-sm text-slate-600 hover:underline ">
+          Back to dashboard →
+      </Link>
+
       <div className="overflow-x-auto  rounded-lg border border-slate-200 bg-white">
         <table className="w-full text-sm">
           <thead className="bg-slate-50 text-left text-slate-500">
@@ -54,7 +59,7 @@ export default function LoanList() {
           <tbody className="divide-y divide-slate-100">
             {loans.map((loan) => (
               <tr key={loan.id}>
-                {isAdmin && <td className="px-4 py-2">{loan.user?.name}</td>}
+                {isAdmin && <td className="px-4 py-2">{loan.user?.username}</td>}
                 <td className="px-4 py-2">{loan.purpose}</td>
                 <td className="px-4 py-2">${Number(loan.principal).toLocaleString()}</td>
                 <td className="px-4 py-2">${Number(loan.total_payable).toLocaleString()}</td>

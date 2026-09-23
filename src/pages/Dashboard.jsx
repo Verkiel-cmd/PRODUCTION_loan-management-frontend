@@ -28,7 +28,7 @@ export default function Dashboard() {
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-lg font-semibold text-slate-900">Dashboard</h1>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-slate-500">{user?.name}</span>
+            <span className="text-sm text-slate-500">{user?.username}</span>
             <button onClick={logout} className="text-sm text-slate-500 hover:text-slate-900">
               Log out
             </button>

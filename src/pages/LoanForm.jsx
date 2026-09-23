@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { createLoan } from "../api/loans";
 
 export default function LoanForm() {
@@ -51,6 +52,7 @@ const preview = useMemo(() => {
 
     setLoading(true);
     try {
+      // CALLED FUNCTION FROM import { createLoan } from "../api/loans";
       await createLoan({
         ...form,
         principal: p,
@@ -67,7 +69,11 @@ const preview = useMemo(() => {
 
   return (
     <div className="max-w-md mx-auto px-4 py-8">
-      <h1 className="text-lg font-semibold text-slate-900 mb-6">Apply for a loan</h1>
+      <h1 className="text-lg font-semibold text-slate-900 mb-2">Apply for a loan</h1>
+
+      <Link to="/dashboard" className="block py-2 text-sm text-slate-600 hover:underline text-right">
+          Back to dashboard →
+      </Link>
 
       {error && (
         <div className="mb-4 rounded-md bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
