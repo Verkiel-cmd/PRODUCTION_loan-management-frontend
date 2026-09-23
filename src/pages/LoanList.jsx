@@ -39,7 +39,7 @@ export default function LoanList() {
     <div className="max-w-5xl mx-auto px-4 py-8">
       <h1 className="text-lg font-semibold text-slate-900 mb-6">
 
-        {/* If admin proceed */}
+        {/* If admin proceed ———————————————————————————————————————————————————————————————————————— */}
         {isAdmin ? "All loans" : "Your loans"}
       </h1>
 
@@ -73,6 +73,8 @@ export default function LoanList() {
                     {loan.status}
                   </span>
                 </td>
+
+                {/* isAdmin means admin that can do taht users can't */}
                 {isAdmin && (
                   <td className="px-4 py-2 space-x-2">
                     {loan.status === "pending" && (
@@ -101,6 +103,9 @@ export default function LoanList() {
                 )}
               </tr>
             ))}
+            {/* isAdmin means admin that can do taht users can't */}
+
+
             {loans.length === 0 && (
               <tr>
                 <td colSpan={isAdmin ? 6 : 4} className="px-4 py-8 text-center text-slate-400">
