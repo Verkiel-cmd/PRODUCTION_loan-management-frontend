@@ -47,31 +47,14 @@
  *  are returned decoded (`data`), errors propagate to the calling page.
  * =============================================================================
  */
-
-import api from "./axios";
+import api, { API_ROOT } from "./axios";
 
 /**
  * GET /api/loans -> paginated loan list (admin: all; borrower: own only).
  */
 export async function getLoans() {
-  const { data } = await api.get("/loans");
-  return data;
-}
-
-/**
- * GET /api/loans/stats -> the six dashboard stat cards.
- */
-export async function getDashboardStats() {
-  const { data } = await api.get("/loans/stats");
-  return data;
-}
-
-/**
- * GET /api/loans/{id} -> single loan + its repayments (detail page).
- */
-export async function getLoan(id) {
-  const { data } = await api.get(`/loans/${id}`);
-  return data;
+  const { data } = await api.get(`${API_ROOT}/loans`); 
+  return data; 
 }
 
 /**
@@ -80,23 +63,15 @@ export async function getLoan(id) {
  * duration_months.
  */
 export async function createLoan(input) {
-  const { data } = await api.post("/loans", input);
-  return data;
+  const { data } = await api.post(`${API_ROOT}/loans`, input); 
+  return data; 
 }
 
 /**
  * PATCH /api/loans/{id}/status -> update loan status (admin only).
  */
 export async function updateLoanStatus(id, status) {
-  const { data } = await api.patch(`/loans/${id}/status`, { status });
-  return data;
-}
-
-/**
- * POST /api/loans/{id}/repayments -> record an installment (detail flow).
- */
-export async function addRepayment(id, input) {
-  const { data } = await api.post(`/loans/${id}/repayments`, input);
+  const { data } = await api.patch(`${API_ROOT}/loans/${id}/status`, { status });
   return data;
 }
 
@@ -104,5 +79,31 @@ export async function addRepayment(id, input) {
  * DELETE /api/loans/{id} -> delete a loan. Returns nothing (204).
  */
 export async function deleteLoan(id) {
-  await api.delete(`/loans/${id}`);
+  await api.delete(`${API_ROOT}/loans/${id}`); 
+}
+
+
+/**
+ * GET /api/loans/stats -> the six dashboard stat cards.
+ */
+export async function getDashboardStats() {
+  const { data } = await api.get(`${API_ROOT}/loans/stats`);
+  return data;
+}
+
+/**
+ * GET /api/loans/{id} -> single loan + its repayments (detail page).
+ */
+export async function getLoan(id) {
+  const { data } = await api.get(`${API_ROOT}/loans/${id}`);
+  return data;
+}
+
+
+/**
+ * POST /api/loans/{id}/repayments -> record an installment (detail flow).
+ */
+export async function addRepayment(id, input) {
+  const { data } = await api.post(`${API_ROOT}/loans/${id}/repayments`, input);
+  return data;
 }

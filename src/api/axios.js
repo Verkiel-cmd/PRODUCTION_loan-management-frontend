@@ -45,23 +45,17 @@
 import axios from "axios";
 
 // Backend root from .env. Keep in sync with `php artisan serve` origin.
-const baseURL = import.meta.env.VITE_API_URL ?? '';
 
-// Reserved for Sanctum-style CSRF bootstrap. Not called today, but kept wired
-// so the auth flow can fetch a CSRF cookie without further plumbing.
-export const sanctum = axios.create({
-  baseURL,
-  withCredentials: true,
-});
+//const baseURL = import.meta.env.VITE_API_URL ?? '';
+const API_ROOT = `${import.meta.env.VITE_API_URL ?? ""}/api`;
 
 // Main JSON API client — points at the /api prefix of the Laravel routes.
 const api = axios.create({
-  baseURL: `${baseURL}/api`,
   withCredentials: true,
-  headers: {
-    Accept: "application/json",
-  },
+  headers: { Accept: "application/json" },
 });
+
+
 
 // Single global place to handle "not authenticated". 401s from any endpoint
 // bounce to /login (AuthContext also nulls the user on its own /api/user call).

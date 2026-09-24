@@ -38,14 +38,15 @@
  *     `err.response?.data?.message | errors`).
  * =============================================================================
  */
-
-import api from "./axios";
-
+import api, { API_ROOT } from "./axios";
 /**
  * POST /api/login  -> logs in and stores the Laravel session cookie.
  */
 export async function login(username, email, password) {
-  const { data } = await api.post("/login", { username, email, password });
+  const { data } = await api.post(`${API_ROOT}/login`, {
+     username, 
+     email, 
+     password });
   return data.user;
 }
 
@@ -53,25 +54,27 @@ export async function login(username, email, password) {
  * POST /api/register -> creates the account (role 'user') and logs it in.
  */
 export async function register(username, email, password, passwordConfirmation) {
-  const { data } = await api.post(
-    "/register",
-    { username, email, password, password_confirmation: passwordConfirmation },
-  );
+  const { data } = await api.post(`${API_ROOT}/register`, {
+    username,
+    email,
+    password,
+    password_confirmation: passwordConfirmation,
+  });
   return data.user;
 }
 
 /**
  * POST /api/logout -> destroys the backend session. Returns nothing (204).
  */
-export async function logout() {
-  await api.post("/logout");
+export async function logout() { await api.post(`${API_ROOT}/logout`); 
 }
+
 
 /**
  * GET /api/user -> current session's user, or a 401 (caught by AuthContext).
  */
 export async function getCurrentUser() {
-  const { data } = await api.get("/user");
+  const { data } = await api.get(`${API_ROOT}/user`);
   return data;
 }
 
@@ -79,7 +82,7 @@ export async function getCurrentUser() {
  * POST /api/forgot-password -> placeholder OTP request.
  */
 export async function forgotPassword(email) {
-  const { data } = await api.post("/forgot-password", { email });
+  const { data } = await api.post(`${API_ROOT}/forgot-password`, { email });
   return data;
 }
 
@@ -87,7 +90,7 @@ export async function forgotPassword(email) {
  * POST /api/verify-otp -> placeholder OTP check.
  */
 export async function verifyOtp(email, otp) {
-  const { data } = await api.post("/verify-otp", { email, otp });
+  const { data } = await api.post(`${API_ROOT}/verify-otp`, { email, otp });
   return data;
 }
 
@@ -95,7 +98,7 @@ export async function verifyOtp(email, otp) {
  * POST /api/reset-password -> sets a new password.
  */
 export async function resetPassword(email, password, passwordConfirmation) {
-  const { data } = await api.post("/reset-password", {
+  const { data } = await api.post(`${API_ROOT}/reset-password`, {
     email,
     password,
     password_confirmation: passwordConfirmation,
