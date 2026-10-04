@@ -47,7 +47,9 @@
  *  are returned decoded (`data`), errors propagate to the calling page.
  * =============================================================================
  */
-import api, { API_ROOT } from "./axios";
+import api from "./axios";
+
+const API_ROOT = `${import.meta.env.VITE_API_URL ?? ""}/api`;
 
 /**
  * GET /api/loans -> paginated loan list (admin: all; borrower: own only).

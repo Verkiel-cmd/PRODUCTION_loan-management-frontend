@@ -38,7 +38,10 @@
  *     `err.response?.data?.message | errors`).
  * =============================================================================
  */
-import api, { API_ROOT } from "./axios";
+import api from "./axios";
+
+const API_ROOT = `${import.meta.env.VITE_API_URL ?? ""}/api`;
+
 /**
  * POST /api/login  -> logs in and stores the Laravel session cookie.
  */

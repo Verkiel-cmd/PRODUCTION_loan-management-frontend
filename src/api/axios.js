@@ -47,11 +47,9 @@ import axios from "axios";
 // Backend root from .env. Keep in sync with `php artisan serve` origin.
 
 //const baseURL = import.meta.env.VITE_API_URL ?? '';
-const API_ROOT = `${import.meta.env.VITE_API_URL ?? ""}/api`;
 
 // Main JSON API client — points at the /api prefix of the Laravel routes.
 const api = axios.create({
-  baseURL: API_ROOT,
   withCredentials: true,
   headers: { Accept: "application/json" },
 });
