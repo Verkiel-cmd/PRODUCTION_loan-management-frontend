@@ -51,6 +51,7 @@ const API_ROOT = `${import.meta.env.VITE_API_URL ?? ""}/api`;
 
 // Main JSON API client — points at the /api prefix of the Laravel routes.
 const api = axios.create({
+  baseURL: API_ROOT,
   withCredentials: true,
   headers: { Accept: "application/json" },
 });
