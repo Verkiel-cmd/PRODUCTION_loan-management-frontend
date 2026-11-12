@@ -41,7 +41,30 @@ async function load() {
     }
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+  let cancelled = false;
+
+  api.get(`${API_ROOT}/notifications`)
+    .then(({ data }) => {
+      if (cancelled) return;
+
+      setItems(data?.data?.data ?? []);
+      setUnread(data?.unread_count ?? 0);
+      setError("");
+    })
+    .catch((err) => {
+      if (cancelled) return;
+
+      console.error(err);
+      setError(err?.response?.data?.message || "Could not load notifications.");
+    });
+
+  return () => {
+    cancelled = true;
+  };
+}, []);
+
+
   async function markRead(id) { 
     await api.patch(`${API_ROOT}/notifications/${id}/read`); await load(); 
   }
