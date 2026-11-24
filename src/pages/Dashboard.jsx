@@ -8,11 +8,11 @@ import api from '../api/axios';
 const API_ROOT = `${import.meta.env.VITE_API_URL ?? ""}/api`;
 
 export default function Dashboard() {
-  const { user, logout } = useAuth();
+  const {user, logout} = useAuth();
   const [stats, setStats] = useState(null);
 
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [notificationsLoading, setNotificationsLoading] = useState(false);
+  const [notificationsLoading, setNotificationsLoading] = useState(true);
   const notificationsRef = useRef(null);
 
   const [items, setItems] = useState([]);
@@ -35,7 +35,6 @@ export default function Dashboard() {
     : [];
 
 async function load() {
-  setNotificationsLoading(true);
 
    try {
     const { data } = await api.get(`${API_ROOT}/notifications`);
@@ -54,7 +53,34 @@ async function load() {
 }
 
 useEffect(() => {
-  load();
+  let cancelled = false;
+
+  api.get(`${API_ROOT}/notifications`)
+    .then(({ data }) => {
+      if (cancelled) return;
+
+      setItems(data?.data?.data ?? []);
+      setUnread(data?.unread_count ?? 0);
+      setError("");
+    })
+    .catch((err) => {
+      if (cancelled) return;
+
+      console.error(err);
+      setError(
+        err?.response?.data?.message ||
+        "Could not load notifications."
+      );
+    })
+    .finally(() => {
+      if (!cancelled) {
+        setNotificationsLoading(false);
+      }
+    });
+
+  return () => {
+    cancelled = true;
+  };
 }, []);
 
 useEffect(() => {
