@@ -44,26 +44,58 @@
 
 import axios from "axios";
 
-// Backend root from .env. Keep in sync with `php artisan serve` origin.
+const API_ROOT = `${import.meta.env.VITE_API_URL ?? ""}/api`;
 
-//const baseURL = import.meta.env.VITE_API_URL ?? '';
+let csrfToken = null;
+let csrfPromise = null;
 
-// Main JSON API client — points at the /api prefix of the Laravel routes.
+export function fetchCsrfToken(force = false) {
+  if (!force && csrfToken) return Promise.resolve(csrfToken);
+  if (!force && csrfPromise) return csrfPromise;
+
+  csrfPromise = axios
+    .create({ withCredentials: true })
+    .get(`${API_ROOT}/csrf-token`)
+    .then(({ data }) => (csrfToken = data.csrf_token))
+    .finally(() => { csrfPromise = null; });
+
+  return csrfPromise;
+}
+
 const api = axios.create({
   withCredentials: true,
-  headers: { Accept: "application/json" },
+  headers: { 
+    Accept: "application/json"
+   },
 });
 
+api.interceptors.request.use(async (config) => {
+  if (["get", "head", "options"].includes(config.method?.toLowerCase())) {
+    return config;
+  }
+  const token = await fetchCsrfToken();
+  config.headers.set("X-CSRF-TOKEN", token);
+  return config;
+});
 
-
-// Single global place to handle "not authenticated". 401s from any endpoint
-// bounce to /login (AuthContext also nulls the user on its own /api/user call).
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-   if (error.response?.status === 401 && !["/login", "/register"].includes(window.location.pathname)) {
-  window.location.href = "/login";
-}
+  async (error) => {
+    const original = error.config;
+
+    // Session expired mid-tab: refresh token and retry the write once.
+    if (error.response?.status === 419 && original && !original._csrfRetried) {
+      original._csrfRetried = true;
+      original.headers.set("X-CSRF-TOKEN", await fetchCsrfToken(true));
+      return api(original);
+    }
+
+    if (
+      error.response?.status === 401 &&
+      !["/login", "/register"].includes(window.location.pathname)
+    ) {
+      window.location.href = "/login";
+    }
     return Promise.reject(error);
   }
 );
